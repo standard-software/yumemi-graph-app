@@ -20,7 +20,7 @@ function App() {
       data: [3, 2, 1],
     }
   ]);
-  const [apiKey, setApiKey] = useState('-');
+  const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
     if (refreshPref === false) { return; }
@@ -40,7 +40,7 @@ function App() {
       setPrefArray(result);
     });
     setRefreshPref(false);
-  }, [refreshPref])
+  }, [apiKey, refreshPref])
 
   useEffect(() => {
     if (refreshGraph === false) { return; }
