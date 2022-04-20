@@ -50,7 +50,11 @@ function App() {
                 type="checkbox"
                 value="js"
                 onChange={() => {
-
+                  const _prefArray = [...prefArray];
+                  const index = _prefArray.findIndex(d => d.prefName === prefName);
+                  const checked = !_prefArray[index].checked;
+                  _prefArray[index] = { prefName, checked };
+                  setPrefArray(_prefArray);
                 }}
                 {...{checked}}
               />
