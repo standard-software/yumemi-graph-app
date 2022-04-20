@@ -30,6 +30,15 @@ function App() {
     {prefCode: '3', prefName: '岩手', checked: false},
   ]);
 
+  const [series, setSeries] = useState([
+    {
+      data: [1, 2, 3],
+    },
+    {
+      data: [3, 2, 1],
+    }
+  ]);
+
   useEffect(() => {
     console.log('useEffect 1');
     if (refreshPref === false) { return; }
@@ -58,6 +67,7 @@ function App() {
     const f = async () => {
 
       const results = [];
+      const _series = [];
 
       for (const {prefName, prefCode, checked} of prefArray) {
         if (!checked) { continue; }
@@ -68,7 +78,7 @@ function App() {
 
         results.push(
           fetch(
-            `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-1&${parameter}`,
+            `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&${parameter}`,
             {
               headers: {"x-api-key": API_KEY}
             }).then(res => {
@@ -76,16 +86,18 @@ function App() {
             return res.json();
           }).then(json => {
             console.log({json});
-            // const result = [];
-            // for (const {prefName} of json.result) {
-            //   result.push({prefName, checked: false});
-            // }
+            const data = [];
+            for (const {year, value} of json.result.data[0].data) {
+              data.push(value);
+            }
+            _series.push({data});
             // setPrefArray(result);
           })
         );
       }
       await Promise.all(results)
-      console.log(`after Promise.all`);
+      // console.log(`after Promise.all`);
+      setSeries(_series)
 
       setRefreshGraph(false);
     };
@@ -102,7 +114,7 @@ function App() {
           都道府県
         </div>
         <div style={{    overflowY: 'scroll', height: '200px'}}>
-        {prefArray.map(({prefName, checked}) => {
+        {prefArray.map(({prefName, prefCode, checked}) => {
           // console.log({prefName, checked})
           return (<>
             <label>
@@ -113,7 +125,7 @@ function App() {
                   const _prefArray = [...prefArray];
                   const index = _prefArray.findIndex(d => d.prefName === prefName);
                   const checked = !_prefArray[index].checked;
-                  _prefArray[index] = { prefName, checked };
+                  _prefArray[index] = { prefName, prefCode, checked };
                   setPrefArray(_prefArray);
                 }}
                 {...{checked}}
@@ -130,7 +142,13 @@ function App() {
         </div>
         <HighchartsReact
           highcharts={Highcharts}
-          options={optionsHighcharts}
+          options={{
+            title: {
+              text: '総人口推移'
+            },
+            series
+          }
+          }
         />
       </header>
     </div>
