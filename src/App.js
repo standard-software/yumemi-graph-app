@@ -3,33 +3,15 @@ import React, { useState, useEffect } from 'react';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
-const optionsHighcharts = {
-  title: {
-    text: '総人口推移'
-  },
-  series: [
-    {
-      data: [1, 2, 3],
-    },
-    {
-      data: [3, 2, 1],
-    }
-  ]
-}
-
-const API_KEY = "-"
-
 function App() {
 
   const [refreshPref, setRefreshPref] = useState(false);
   const [refreshGraph, setRefreshGraph] = useState(false);
-
   const [prefArray, setPrefArray] = useState([
     {prefCode: '1', prefName: '北海道', checked: false},
     {prefCode: '2', prefName: '青森', checked: true},
     {prefCode: '3', prefName: '岩手', checked: false},
   ]);
-
   const [series, setSeries] = useState([
     {
       data: [1, 2, 3],
@@ -38,6 +20,7 @@ function App() {
       data: [3, 2, 1],
     }
   ]);
+  const [apiKey, setApiKey] = useState('-');
 
   useEffect(() => {
     console.log('useEffect 1');
@@ -45,7 +28,7 @@ function App() {
     fetch(
       `https://opendata.resas-portal.go.jp/api/v1/prefectures`,
       {
-        headers: {"x-api-key": API_KEY}
+        headers: {"x-api-key": apiKey}
       }).then(res => {
       // console.log({res});
       return res.json();
@@ -80,7 +63,7 @@ function App() {
           fetch(
             `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&${parameter}`,
             {
-              headers: {"x-api-key": API_KEY}
+              headers: {"x-api-key": apiKey}
             }).then(res => {
             // console.log({res});
             return res.json();
@@ -108,6 +91,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <input type="text" value={apiKey} placeHolder="api_key"
+          onChange={(e) => setApiKey(e.target.value)}
+        />
         <div onClick={() => {
           setRefreshPref(true);
         }}>
