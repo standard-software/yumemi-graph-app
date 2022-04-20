@@ -23,7 +23,6 @@ function App() {
   const [apiKey, setApiKey] = useState('-');
 
   useEffect(() => {
-    console.log('useEffect 1');
     if (refreshPref === false) { return; }
     fetch(
       `https://opendata.resas-portal.go.jp/api/v1/prefectures`,
@@ -33,7 +32,7 @@ function App() {
       // console.log({res});
       return res.json();
     }).then(json => {
-      console.log({json});
+      // console.log({json});
       const result = [];
       for (const {prefCode, prefName} of json.result) {
         result.push({prefCode, prefName, checked: false});
@@ -44,7 +43,6 @@ function App() {
   }, [refreshPref])
 
   useEffect(() => {
-    console.log('useEffect 2');
     if (refreshGraph === false) { return; }
 
     const f = async () => {
@@ -55,7 +53,7 @@ function App() {
       for (const {prefName, prefCode, checked} of prefArray) {
         if (!checked) { continue; }
 
-        console.log({prefName, prefCode, checked})
+        // console.log({prefName, prefCode, checked})
 
         const parameter = `prefCode=${prefCode}`;
 
@@ -68,13 +66,12 @@ function App() {
             // console.log({res});
             return res.json();
           }).then(json => {
-            console.log({json});
+            // console.log({json});
             const data = [];
             for (const {year, value} of json.result.data[0].data) {
-              data.push(value);
+              data.push([year, value]);
             }
-            _series.push({data});
-            // setPrefArray(result);
+            _series.push({data, name: prefName});
           })
         );
       }
@@ -113,6 +110,7 @@ function App() {
                   const checked = !_prefArray[index].checked;
                   _prefArray[index] = { prefName, prefCode, checked };
                   setPrefArray(_prefArray);
+                  setRefreshGraph(true);
                 }}
                 {...{checked}}
               />
