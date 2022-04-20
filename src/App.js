@@ -1,5 +1,21 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
+
+const optionsHighcharts = {
+  title: {
+    text: '総人口推移'
+  },
+  series: [
+    {
+      data: [1, 2, 3],
+    },
+    {
+      data: [3, 2, 1],
+    }
+  ]
+}
 
 function App() {
 
@@ -63,6 +79,10 @@ function App() {
           </>)
         })}
         </div>
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={optionsHighcharts}
+        />
       </header>
     </div>
   );
