@@ -1,36 +1,61 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function App() {
 
-  const [prefArray, setPrefArray] = useState([]);
+  const [refreshData, setRefreshData] = useState(false);
 
-  fetch(
-    `https://opendata.resas-portal.go.jp/api/v1/prefectures`,
-    {
-      headers: {"x-api-key": "-"}
-    }).then(res => {
-    // console.log({res});
-    return res.json();
-  }).then(json => {
-    // console.log({json});
-    const result = [];
-    for (const {prefCode, prefName} of json.result) {
-      result.push(prefName)
-    }
-    setPrefArray(result);
-  });
+  const [prefArray, setPrefArray] = useState([
+    {prefName: '北海道', checked: false},
+    {prefName: '青森', checked: true},
+    {prefName: '岩手', checked: false},
+  ]);
+
+  useEffect(() => {
+    console.log('useEffect');
+    if (refreshData === false) { return; }
+    fetch(
+      `https://opendata.resas-portal.go.jp/api/v1/prefectures`,
+      {
+        headers: {"x-api-key": "-"}
+      }).then(res => {
+      // console.log({res});
+      return res.json();
+    }).then(json => {
+      console.log({json});
+      const result = [];
+      for (const {prefName} of json.result) {
+        result.push({prefName, checked: false});
+      }
+      setPrefArray(result);
+    });
+    setRefreshData(false);
+  }, [refreshData])
 
   return (
     <div className="App">
       <header className="App-header">
-        <div>
+        <div onClick={() => {
+          console.log('都道府県');
+          setRefreshData(true);
+        }}>
           都道府県
         </div>
         <div style={{    overflowY: 'scroll', height: '200px'}}>
-        {prefArray.map(pref => {
+        {prefArray.map(({prefName, checked}) => {
+          console.log({prefName, checked})
           return (<>
-            {pref}<br />
+            <label>
+              <input
+                type="checkbox"
+                value="js"
+                onChange={() => {
+
+                }}
+                {...{checked}}
+              />
+              {prefName}
+          </label>
           </>)
         })}
         </div>
